@@ -1,15 +1,52 @@
 import React from 'react';
-import { ScrollView, SafeAreaView, TouchableOpacity, Animated, Easing, StatusBar } from 'react-native';
+import { ScrollView, SafeAreaView, TouchableOpacity, Animated, StatusBar } from 'react-native';
 import styled from 'styled-components';
 import Card from '../components/Card';
 import { NotificationIcon } from '../components/Icons';
 import Logo from '../components/Logo';
 import Course from '../components/Course';
 import Menu from '../components/Menu';
+import Avatar from '../components/Avatar';
 import { connect } from 'react-redux';
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
+
+const CardsQuery = gql`
+  {
+    cardsCollection {
+      items {
+        title
+        subtitle
+        image {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        subtitle
+        caption
+        logo {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        content
+      }
+    }
+  }
+`;
 
 function mapStateToProps(state) {
-	return { action: state.action }
+	return { action: state.action, name: state.name }
 }
 
 function mapDispatchToProps(dispatch) {
@@ -21,6 +58,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 class HomeScreen extends React.Component {
+
+	static navigationOptions = { header: null }
 
 	state = {
 		scale: new Animated.Value(1),
@@ -75,10 +114,10 @@ class HomeScreen extends React.Component {
 					<ScrollView style={{height: '100%'}}>
 						<Titlebar>
 							<TouchableOpacity onPress={this.props.openMenu} style={{ position: 'absolute', top: 0, left: 0 }}>
-								<Avatar source={require('../assets/avatar.jpg')} />
+								<Avatar />
 							</TouchableOpacity>
 							<Title>Open Upps!</Title>
-							<Name>Vlad</Name>
+							<Name>{this.props.name}</Name>
 							<NotificationIcon
 								style={{position: "absolute", right: 20, top: 5 }}
 							/>
@@ -102,30 +141,46 @@ class HomeScreen extends React.Component {
 							style={{ paddingBottom: 30 }}
 							showsHorizontalScrollIndicator={false}
 						>
-						{cards.map((card,index) => (
-							<Card
-								key={index}
-								title={card.title}
-								image={card.image}
-								caption={card.caption}
-								logo={card.logo}
-								subtitle={card.subtitle}
-							/>							
-						))}
+						<Query query={CardsQuery}>{({loading,error,data}) => {
+							if(loading) return <Message>Loading...</Message>
+							if(error) return <Message>Error...</Message>
+							return (
+								<React.Fragment>
+									{data.cardsCollection.items.map((card,index) => (
+										<TouchableOpacity key={index} onPress={() => {
+											console.log(card)
+											this.props.navigation.push("Section", { section: card })
+										}}>
+											<Card
+												title={card.title}
+												image={card.image.url}
+												caption={card.caption}
+												logo={card.logo.url}
+												subtitle={card.subtitle}
+												content={card.content}
+											/>
+										</TouchableOpacity>
+									))}
+								</React.Fragment>
+								
+							)
+						}}</Query>
 						</ScrollView>
 						<Subtitle>Popular Courses</Subtitle>
-						{courses.map((course,index) => (
-							<Course 
-								key={index}
-								image={course.image}
-								title={course.title}
-								subtitle={course.subtitle}
-								logo={course.logo}
-								author={course.author}
-								avatar={course.avatar}
-								caption={course.caption}
-							/>
-						))}
+						<CourseContainer>
+							{courses.map((course,index) => (
+								<Course 
+									key={index}
+									image={course.image}
+									title={course.title}
+									subtitle={course.subtitle}
+									logo={course.logo}
+									author={course.author}
+									avatar={course.avatar}
+									caption={course.caption}
+								/>
+							))}
+						</CourseContainer>
 					</ScrollView>
 				</SafeAreaView>
       </AnimatedContainer>
@@ -135,6 +190,20 @@ class HomeScreen extends React.Component {
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(HomeScreen);
+
+
+const CourseContainer = styled.View`
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding-left: 10px;
+`;
+
+const Message = styled.Text`
+	margin: 20px;
+	color: #b8bece;
+	font-size: 15px;
+	font-weight: 500;
+`;
 
 const RootView = styled.View`
 	background: black,
@@ -148,14 +217,6 @@ const Subtitle = styled.Text`
 	margin-left: 20px;
 	margin-top: 15px;
 	text-transform: uppercase;
-`;
-
-const Avatar = styled.Image`
-	width: 44px;
-	height: 44px;
-	background: black;
-	border-radius: 22px;
-	margin-left: 20px;
 `;
 
 const Container = styled.View `
