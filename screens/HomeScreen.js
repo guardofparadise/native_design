@@ -148,7 +148,6 @@ class HomeScreen extends React.Component {
 								<React.Fragment>
 									{data.cardsCollection.items.map((card,index) => (
 										<TouchableOpacity key={index} onPress={() => {
-											console.log(card)
 											this.props.navigation.push("Section", { section: card })
 										}}>
 											<Card

@@ -10,6 +10,9 @@ const screenWidth = Dimensions.get('window').width;
 if(screenWidth > 500) {
 	cardWidth = 500
 	cardHeight = 770
+} else {
+	cardWidth = screenWidth;
+	cardHeight = 900;
 }
 
 function mapStateToProps(state) {

@@ -43,7 +43,7 @@ class SectionScreen extends React.Component {
 						</CloseView>					
 					</TouchableOpacity>
 					
-						<Content style={{ height: SectionHeight }}>
+						<Content style={{ height: SectionHeight*2 }}>
 							<Markdown
 								body={section.content}
 								pureCSS={htmlStyles}
