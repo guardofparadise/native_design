@@ -1,7 +1,16 @@
 import React from 'react';
-import { ScrollView, SafeAreaView, TouchableOpacity, Animated, StatusBar } from 'react-native';
+import { 
+	ScrollView, 
+	SafeAreaView, 
+	TouchableOpacity,
+	Animated, 
+	StatusBar,
+	Easing,
+	Platform
+} from 'react-native';
 import styled from 'styled-components';
 import Card from '../components/Card';
+import { Icon } from 'expo';
 import { NotificationIcon } from '../components/Icons';
 import Logo from '../components/Logo';
 import Course from '../components/Course';
@@ -10,6 +19,9 @@ import Avatar from '../components/Avatar';
 import { connect } from 'react-redux';
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
+import ModalLogin from '../components/ModalLogin';
+import NotificationButton from '../components/NotificationButton';
+import Notifications from '../components/Notifications';
 
 const CardsQuery = gql`
   {
@@ -53,6 +65,12 @@ function mapDispatchToProps(dispatch) {
 	return {
 		openMenu: () => dispatch({
 			type: "OPEN_MENU"
+		}),
+		openLogin: () => dispatch({
+			type: 'OPEN_LOGIN',
+		}),
+		openNotif: () => dispatch({
+			type: 'OPEN_NOTIF'
 		})
 	}
 }
@@ -69,6 +87,7 @@ class HomeScreen extends React.Component {
 
 	componentDidMount() {
 		StatusBar.setBarStyle('dark-content', true);
+		if(Platform.OS == 'android') StatusBar.setBarStyle('light-content', true);
 	}
 
 	componentDidUpdate() {
@@ -105,6 +124,14 @@ class HomeScreen extends React.Component {
 		}
 	}
 
+	handleAvatar = () => {
+		if(this.props.name !== 'User') {
+			this.props.openMenu();
+		} else {
+			this.props.openLogo();
+		}
+	}
+
   render() {
     return (
 			<RootView>
@@ -113,11 +140,17 @@ class HomeScreen extends React.Component {
 				<SafeAreaView>
 					<ScrollView style={{height: '100%'}}>
 						<Titlebar>
-							<TouchableOpacity onPress={this.props.openMenu} style={{ position: 'absolute', top: 0, left: 0 }}>
+							<TouchableOpacity onPress={this.handleAvatar} style={{ position: 'absolute', top: 0, left: 0 }}>
 								<Avatar />
 							</TouchableOpacity>
 							<Title>Open Upps!</Title>
 							<Name>{this.props.name}</Name>
+							<TouchableOpacity
+								onPress={() => this.props.openNotify()}
+								style={{ position: 'absolute', right: 20, top: 5 }}
+							>
+								<NotificationButton/>
+							</TouchableOpacity>
 							<NotificationIcon
 								style={{position: "absolute", right: 20, top: 5 }}
 							/>

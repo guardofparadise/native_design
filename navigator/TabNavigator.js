@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import SectionScreen from '../screens/SectionScreen';
 import CoursesScreen from '../screens/CoursesScreen';
 import ProjectScreen from '../screens/ProjectScreen';
+import VideoScreen from '../screens/VideoScreen';
 import { Icon } from 'expo';
 
 const activeColor = "#4775f2";
@@ -14,14 +15,15 @@ const inactiveColor = "#b8bece";
 
 const HomeStack = createStackNavigator({
 	Home: HomeScreen,
-	Section: SectionScreen
+	Section: SectionScreen,
+	Video: VideoScreen
 }, {mode: 'modal'});
 
 HomeStack.navigationOptions = ({ navigation }) => {
 	var tabBarVisible = true;
 	const routeName = navigation.state.routes[navigation.state.index].routeName;
 
-	if(routeName == 'Section') {
+	if(routeName == 'Section' || routeName == 'Video') {
 		tabBarVisible = false
 	}
 	return {
