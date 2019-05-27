@@ -125,17 +125,16 @@ class HomeScreen extends React.Component {
 	}
 
 	handleAvatar = () => {
-		if(this.props.name !== 'User') {
-			this.props.openMenu();
-		} else {
-			this.props.openLogo();
-		}
+
+			this.props.openLogin();
+			
 	}
 
   render() {
     return (
 			<RootView>
 			<Menu />
+			<Notifications />
       <AnimatedContainer style={{ transform: [{ scale: this.state.scale }], opacity: this.state.opacity, borderRadius: this.state.borderRadius }}>
 				<SafeAreaView>
 					<ScrollView style={{height: '100%'}}>
@@ -146,14 +145,11 @@ class HomeScreen extends React.Component {
 							<Title>Open Upps!</Title>
 							<Name>{this.props.name}</Name>
 							<TouchableOpacity
-								onPress={() => this.props.openNotify()}
+								onPress={() => this.props.openNotif()}
 								style={{ position: 'absolute', right: 20, top: 5 }}
 							>
 								<NotificationButton/>
 							</TouchableOpacity>
-							<NotificationIcon
-								style={{position: "absolute", right: 20, top: 5 }}
-							/>
 						</Titlebar>
 						<ScrollView 
 							showsHorizontalScrollIndicator={false} 
@@ -216,6 +212,7 @@ class HomeScreen extends React.Component {
 					</ScrollView>
 				</SafeAreaView>
       </AnimatedContainer>
+			<ModalLogin />
 			</RootView>
     );
   }
